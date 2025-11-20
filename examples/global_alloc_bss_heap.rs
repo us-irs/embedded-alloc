@@ -9,19 +9,18 @@ use defmt::Debug2Format;
 use defmt_semihosting as _;
 
 use core::panic::PanicInfo;
-// Linked-List First Fit Heap allocator (feature = "llff")
-use embedded_alloc::LlffHeap as Heap;
-// Two-Level Segregated Fit Heap allocator (feature = "tlsf")
-// use embedded_alloc::TlsfHeap as Heap;
+use embedded_alloc::TlsfHeap as Heap;
 
 #[global_allocator]
 static HEAP: Heap = Heap::empty();
 
 #[entry]
 fn main() -> ! {
-    // Initialize the allocator BEFORE you use it
+    const HEAP_SIZE: usize = 16 * 1024;
+    static HEAP_MEM: static_cell::ConstStaticCell<[u8; HEAP_SIZE]> =
+        static_cell::ConstStaticCell::new([0; HEAP_SIZE]);
     unsafe {
-        embedded_alloc::init!(HEAP, 1024);
+        HEAP.init(HEAP_MEM.take().as_mut_ptr() as usize, HEAP_SIZE);
     }
 
     let vec = alloc::vec![1];
