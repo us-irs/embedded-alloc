@@ -9,6 +9,8 @@ runner = "./qemu-runner.sh --target thumbv7em-none-eabihf"
 rustflags = [
   "-Clink-arg=-Tlink.x",
   "-Clink-arg=-Tdefmt.x",
+  # Can be useful for debugging and to inspect where the heap memory is placed/linked.
+  # "-Clink-args=-Map=app.map"
 ]
 
 [target.thumbv6m-none-eabi]
